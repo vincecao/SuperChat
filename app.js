@@ -4,9 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var multer = require('multer');
+var mongoose = require('mongoose');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+
+
 
 // var http = require('http').Server(express);
 // var io = require('socket.io')(http);
@@ -67,6 +71,12 @@ app.use(function(err, req, res, next) {
   });
 });
 
+global.dbHandel = require('./database/dbHandel');
+global.db = mongoose.connect("mongodb://localhost:27017/nodedb");
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(multer());
+app.use(cookieParser());
 
 module.exports = app;
 
