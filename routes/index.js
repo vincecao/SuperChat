@@ -13,7 +13,9 @@ router.route("/register").get(function(req,res){
 
 
 router.route("/chat").get(function(req,res){ 
-	res.render("chat",{title:'chat'});
+	//res.render("chat",{name:"Vince"});
+	res.render("chat",{color:"rgb(185, 133, 173)"});
+
 });
 
 
