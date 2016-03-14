@@ -75,7 +75,7 @@ global.dbHandel = require('./database/dbHandel');
 global.db = mongoose.connect("mongodb://localhost:27017/nodedb");
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(multer());
+var upload = multer({ dest: './uploads' });
 app.use(cookieParser());
 
 module.exports = app;
