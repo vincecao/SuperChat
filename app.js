@@ -1,94 +1,195 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var multer = require('multer');
-var mongoose = require('mongoose');
-var routes = require('./routes/index');
-var users = require('./routes/users');
-var session = require('express-session');
+/*
+Module Dependencies 
+*/
+var express = require('express'),
+    http = require('http'),
+    path = require('path'),
+    mongoose = require('mongoose'),
+    hash = require('./pass').hash;
+
 var app = express();
-//set engine
-app.set('views', path.join(__dirname, 'views'));
-app.engine("html",require("ejs").__express);
-//app.set('view engine', 'ejs');
-app.set('view engine', 'html');
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+var name;
 
-//route
-app.use('/', routes); 
-app.use('/users', users); 
-app.use('/login',routes); 
-app.use('/register',routes); 
-app.use('/chat',routes); 
-app.use('/logout',routes); 
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+io.on('connection', function(socket){
+    socket.on('chat message', function(msg){
+      io.emit('chat message', msg);
+    });
 });
 
-// error handlers
 
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
+server.listen(3000, function(){
+  console.log('listening on *:3000');
+});
+
+/*
+Database and Models
+*/
+mongoose.connect("mongodb://localhost/myapp");
+var UserSchema = new mongoose.Schema({
+    //id: { type: Number, min: 3, max: 8 },
+    username: String,
+    password: String,
+    //color: String,
+    salt: String,
+    hash: String
+});
+
+var User = mongoose.model('users', UserSchema);
+/*
+Middlewares and configurations 
+*/
+app.configure(function () {
+    app.use(express.bodyParser());
+    app.use(express.cookieParser('Authentication Tutorial '));
+    app.use(express.session());
+    app.use(express.static(path.join(__dirname, 'public')));
+    app.set('views', __dirname + '/views');
+    app.engine("html",require("ejs").__express);
+    app.set('view engine', 'html');
+    //app.set('view engine', 'ejs')
+    //app.set('view engine', 'jade');
+});
+
+app.use(function (req, res, next) {
+    var err = req.session.error,
+        msg = req.session.success;
+    delete req.session.error;
+    delete req.session.success;
+    res.locals.message = '';
+    if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
+    if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
+    next();
+});
+/*
+Helper Functions
+*/
+function authenticate(name, pass, fn) {
+    if (!module.parent) console.log('authenticating %s:%s', name, pass);
+
+    User.findOne({
+        username: name
+    },
+
+    function (err, user) {
+        if (user) {
+            if (err) return fn(new Error('cannot find user'));
+            hash(pass, user.salt, function (err, hash) {
+                if (err) return fn(err);
+                if (hash == user.hash) return fn(null, user);
+                fn(new Error('invalid password'));
+            });
+        } else {
+            return fn(new Error('cannot find user'));
+        }
     });
-  });
+
 }
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
-
-global.dbHandel = require('./database/dbHandel');
-global.db = mongoose.connect("mongodb://localhost:27017/nodedb");
-
-app.use(bodyParser.urlencoded({ extended: true }));
-var upload = multer({ dest: './uploads' });
-app.use(cookieParser());
-
-app.use(session({ 
-    secret: 'secret',
-    cookie:{ 
-        maxAge: 1000*60*30
-    },
-    resave: true,
-    saveUninitialized: true
-}));
-
-app.use(function(req,res,next){ 
-    res.locals.user = req.session.user;
-    var err = req.session.error;
-    delete req.session.error;
-    res.locals.message = ""; 
-    if(err){ 
-        res.locals.message = '<div class="alert alert-danger" style="margin-bottom:20px;color:red;">'+err+'</div>';
+function requiredAuthentication(req, res, next) {
+    if (req.session.user) {
+        next();
+    } else {
+        req.session.error = 'Access denied!';
+        res.redirect('/login');
     }
-    next(); 
+}
+
+function userExist(req, res, next) {
+    User.count({
+        username: req.body.username
+    }, function (err, count) {
+        if (count === 0) {
+            next();
+        } else {
+            req.session.error = "User Exist"
+            res.redirect("/signup");
+        }
+    });
+}
+
+/*
+Routes
+*/
+app.get("/", function (req, res) {
+
+    if (req.session.user) {
+        res.send("Welcome " + req.session.user.username + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
+        sessionName = req.session.user.username;
+    } else {
+        res.send("<a href='/login'> Login</a>" + "<br>" + "<a href='/signup'> Sign Up</a>");
+    }
 });
 
-module.exports = app;
+app.get("/signup", function (req, res) {
+    if (req.session.user) {
+        res.redirect("/");
+    } else {
+        res.render("signup", {title:'User register'});
+    }
+});
 
+app.post("/signup", userExist, function (req, res) {
+    var password = req.body.password;
+    var username = req.body.username;
+
+    hash(password, function (err, salt, hash) {
+        if (err) throw err;
+        var user = new User({
+            username: username,
+            salt: salt,
+            hash: hash,
+        }).save(function (err, newUser) {
+            if (err) throw err;
+            authenticate(newUser.username, password, function(err, user){
+                if(user){
+                    req.session.regenerate(function(){
+                        req.session.user = user;
+                        req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now access <a href="/restricted">/restricted</a>.';
+                        res.redirect('/');
+                    });
+                }
+            });
+        });
+    });
+});
+
+app.get("/login", function (req, res) {
+    res.render("login", {title:'User Login', message: req.session.error});
+});
+
+app.post("/login", function (req, res) {
+    authenticate(req.body.username, req.body.password, function (err, user) {
+        if (user) {
+
+            req.session.regenerate(function () {
+
+                req.session.user = user;
+                req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now access <a href="/restricted">/restricted</a>.';
+                res.redirect('/');
+            });
+        } else {
+            req.session.error = 'Authentication failed, please check your ' + ' username and password.';
+            res.redirect('/login');
+        }
+    });
+});
+
+app.get('/logout', function (req, res) {
+    req.session.destroy(function () {
+        res.redirect('/');
+    });
+});
+
+app.get('/chat', function(req,res){ 
+    
+    //res.render("chat",{name:"Vince"});
+    res.render("chat",{color:"rgb(185, 133, 173)", name: sessionName});
+});
+
+app.get('/profile', requiredAuthentication, function (req, res) {
+    res.send('Profile page of '+ req.session.user.username +'<br>'+' click to <a href="/logout">logout</a>' +'<br>');
+       
+});

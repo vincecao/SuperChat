@@ -4,41 +4,14 @@
     <meta charset="utf-8">
     <title><%= title %></title>
 </head>
-        <form role="form" method="post" onsubmit="return false">
-            <input type="text" id="username" name="username" placeholder="Please enter the user name" required>
-            <input type="text" id="password" name="password" placeholder="Please enter the password" required>
-            <button type="submit" id="login0">Sign in</button>
-            <button type="button" id="register0">Register</button>
+<h1><%= title %></h1>
+        <form id= 'login' action='/login' method='POST'>
+        Username: <input type='text' name='username'><br>
+        Password: <input type='password' name='password'><br>
+
+        <button type='submit'>Log In</button>
         </form>
-    <script type="text/javascript" src="javascripts/jquery.min.js"></script>
-    <script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
-    <script type="text/javascript">
-    $(function(){ 
-        $("#register0").click(function(){ 
-            location.href = 'register';
-        });
-        $("#login0").click(function(){ 
-            var username = $("#username").val();
-            var password = $("#password").val();
-            var data = {"uname":username,"upwd":password};
-            $.ajax({ 
-                url:'/login',
-                type:'post',
-                data: data,
-                success: function(data,status){ 
-                    if(status == 'success'){ 
-                        location.href = 'home';
-                    }
-                },
-                error: function(data,status){ 
-                    if(status == 'error'){ 
-                        location.href = 'login';
-                    }
-                }
-            });
-        });
-    });
-    </script>
-</body>
+		<h1><%= message %></h1>
+		</body>
 </head>
 </html>
