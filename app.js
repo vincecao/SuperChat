@@ -13,6 +13,8 @@ var io = require('socket.io').listen(server);
 var id = 0;
 var name;
 var WholePassword;
+var WholeUserid;
+
 io.on('connection', function(socket){
     socket.on('chat message', function(msg){
       io.emit('chat message', msg);
@@ -114,17 +116,13 @@ function userExist(req, res, next) {
 Routes
 */
 app.get("/", function (req, res) {
-    var Userid = 0;
+    
     if (req.session.user) {
-        User.findOne({
-        username: req.session.user.username
-        }, function (err, user) {
-        if (user) {
-            //Userid = User.get(id);
-        }
-    });
+        
+        //WholeUserid = User.findOne({username: req.session.user.username}, function (err,obj) {console.log(obj);}).id;
 
-        res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + Userid + "<br>" +"The password is " + WholePassword + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
+
+        res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + WholeUserid + "<br>" +"The password is " + WholePassword + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
         sessionName = req.session.user.username;
 
     } else {
