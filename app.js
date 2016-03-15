@@ -142,11 +142,12 @@ app.get("/", function (req, res) {
                     return output;
             }
             var userlist = FetchUsername(users, "username");
-            userstring = userlist.join();
+            userstring = userlist.join("-");
             console.log(typeof userstring);
-        });
-        res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + WholeUserid + "<br>" +"The password is " + WholePassword + "<br>" + "users has registered: <br>" + userstring + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
-        sessionName = req.session.user.username; 
+            //res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + WholeUserid + "<br>" +"The password is " + WholePassword + "<br>" + "users has registered: <br>" + userstring + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
+            res.render("home",{name:req.session.user.username, WholePassword: WholePassword, userstring: userlist});
+            });
+                sessionName = req.session.user.username; 
     } else {
         res.redirect("/login");
     }
@@ -157,6 +158,14 @@ app.get("/signup", function (req, res) {
         res.redirect("/");
     } else {
         res.render("signup", {title:'User register'});
+    }
+});
+
+app.get("/home", function (req, res) {
+    if (req.session.user) {
+        res.render("home");
+    } else {
+        res.redirect("/");
     }
 });
 
