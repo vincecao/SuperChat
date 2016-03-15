@@ -126,7 +126,7 @@ app.get("/", function (req, res) {
         sessionName = req.session.user.username;
 
     } else {
-        res.send("<a href='/login'> Login</a>" + "<br>" + "<a href='/signup'> Sign Up</a>");
+        res.redirect("/login");
     }
 });
 
@@ -201,7 +201,7 @@ app.get('/logout', function (req, res) {
 app.get('/chat', function(req,res){ 
     
     //res.render("chat",{name:"Vince"});
-    res.render("chat",{color:"rgb(185, 133, 173)", name: sessionName});
+    res.render("chat",{color:"#FFF", name: sessionName});
 });
 
 app.get('/profile', requiredAuthentication, function (req, res) {
