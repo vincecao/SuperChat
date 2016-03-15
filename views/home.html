@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Home</title>
+    </head>
+<body>
+<h1>Home</h1>
+        <form action= 'home'>
+        Welcome <%= name %><br>
+        The password is <%= WholePassword %><br>
+        users has registered: <br>
+        <ul>
+        <% for(var i=0; i<userstring.length; i++) { %>
+            <li><%= userstring[i] %></li>
+        <% } %>
+        </ul>
+        <a href='/logout'>logout</a><br>
+        <a href='/chat'>Chatting Page</a>
+        </form>
+</body>
+</head>
+</html>
