@@ -12,7 +12,7 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 var id = 0;
 var name;
-
+var WholePassword;
 io.on('connection', function(socket){
     socket.on('chat message', function(msg){
       io.emit('chat message', msg);
@@ -114,10 +114,19 @@ function userExist(req, res, next) {
 Routes
 */
 app.get("/", function (req, res) {
-
+    var Userid = 0;
     if (req.session.user) {
-        res.send("Welcome " + req.session.user.username + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
+        User.findOne({
+        username: req.session.user.username
+        }, function (err, user) {
+        if (user) {
+            //Userid = User.get(id);
+        }
+    });
+
+        res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + Userid + "<br>" +"The password is " + WholePassword + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
         sessionName = req.session.user.username;
+
     } else {
         res.send("<a href='/login'> Login</a>" + "<br>" + "<a href='/signup'> Sign Up</a>");
     }
@@ -132,7 +141,9 @@ app.get("/signup", function (req, res) {
 });
 
 app.post("/signup", userExist, function (req, res) {
+
     var password = req.body.password;
+    WholePassword = req.body.password;
     var username = req.body.username;
     
     hash(password, function (err, salt, hash) {
