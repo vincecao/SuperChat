@@ -132,22 +132,21 @@ Routes
 app.get("/", function (req, res) {
     
     if (req.session.user) {
-        
-        //User.findOne({username: req.session.user.username}, function (err,obj) {WholeUserid = obj.id;});
-
-        res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + WholeUserid + "<br>" +"The password is " + WholePassword + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>" + "<%= someValue %>");
-        sessionName = req.session.user.username;
-
-        // exports.someValue = function(req, res, next) {
-        // //query with mongoose
-        //     var query = UserSchema.SomeValue.find({}).select('username');
-
-        //     query.exec(function (err, someValue) {
-        //         if (err) return next(err);
-        //         res.render("/",{someValue: someValue});
-        //     });
-        // };
-
+        var userstring = "";
+        User.find(function (err, users){
+            if (err) return console.error(err);
+                function FetchUsername(input, field) {
+                    var output = ["sad","a","sda"];
+                    for (var i=0; i < input.length ; ++i)
+                        output.push(input[i][field]);
+                    return output;
+            }
+            var userlist = FetchUsername(users, "username");
+            userstring = userlist.join();
+            console.log(typeof userstring);
+        });
+        res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + WholeUserid + "<br>" +"The password is " + WholePassword + "<br>" + "users has registered: <br>" + userstring + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
+        sessionName = req.session.user.username; 
     } else {
         res.redirect("/login");
     }
@@ -230,6 +229,4 @@ app.get('/chat', function(req,res){
     //res.render("chat",{name:"Vince"});
     res.render("chat",{color:"#FFF", name: sessionName});
 });
-
-
 
