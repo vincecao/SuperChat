@@ -75,7 +75,7 @@ app.use(function (req, res, next) {
     delete req.session.error;
     delete req.session.success;
     res.locals.message = '';
-    if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
+    if (err) res.locals.message = err;
     if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
     next();
 });
@@ -83,7 +83,7 @@ app.use(function (req, res, next) {
 Helper Functions
 */
 function authenticate(name, pass, fn) {
-    if (!module.parent) console.log('%s have loged in, its password is %s', name, pass);
+    //if (!module.parent) console.log('%s have loged in, its password is %s', name, pass);
  
     User.findOne({
         username: name
@@ -110,6 +110,7 @@ function requiredAuthentication(req, res, next) {
     } else {
         req.session.error = 'Access denied!';
         res.redirect('/login');
+
     }
 }
 
