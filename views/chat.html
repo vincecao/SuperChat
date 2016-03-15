@@ -10,13 +10,13 @@
       form { background: #FFF; padding: 10px; position: fixed; bottom: 0; width: 100%; border-top: 2px solid #C4C4C4  }
       form input { border: 0; padding: 10px; width: 100%; margin-right: .5%; }
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { color: black; list-style-type: none; margin: 0; padding: 0; margin-bottom: 60px;}
+      #messages { color: black; list-style-type: none; margin: 0 50px 60px 50px; padding: 0;}
       #messages li { padding: 10px 10px; background: <%= color %>; border-bottom: 2px solid #F5F5F5; font-size: 30px;}
       /*#messages li:nth-child(odd) { }*/
     </style>
   </head>
   <body>
-  <h1 style="color: #CC4106">Login As: <span style="color: #0670CC"><%= name %></span></h1>
+  <h1 style="color: #CC4106; margin-left: 50px"> Login As: <span style="color: #0670CC"><%= name %></span><button class="btn btn-info btn-sm" onclick="location.href='/Logout'" style="margin:0 50px">Logout</button></h1>
     <ul id="messages"></ul>
     <form action="" class="form-inline">
       <input id="m" autocomplete="off" class="form-control" placeholder="type enter to send" / style="width: 100%">

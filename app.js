@@ -6,6 +6,7 @@ var express = require('express'),
     path = require('path'),
     mongoose = require('mongoose'),
     hash = require('./pass').hash;
+    googleTranslate = require('google-translate')("AIzaSyDLYBE-s5itd-S3ts-ngRubBHnShHE1sns");
 
 var app = express();
 var server = http.createServer(app);
@@ -118,10 +119,7 @@ Routes
 app.get("/", function (req, res) {
     
     if (req.session.user) {
-        
         //WholeUserid = User.findOne({username: req.session.user.username}, function (err,obj) {console.log(obj);}).id;
-
-
         res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + WholeUserid + "<br>" +"The password is " + WholePassword + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
         sessionName = req.session.user.username;
 
@@ -204,7 +202,7 @@ app.get('/chat', function(req,res){
     res.render("chat",{color:"#FFF", name: sessionName});
 });
 
-app.get('/profile', requiredAuthentication, function (req, res) {
-    res.send('Profile page of '+ req.session.user.username +'<br>'+' click to <a href="/logout">logout</a>' +'<br>');
-       
-});
+googleTranslate.translate('My name is Brandon', 'zh', function(err, translation) {
+  console.log(translation.translatedText);
+  });
+
