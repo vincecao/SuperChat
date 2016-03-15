@@ -10,7 +10,7 @@ var express = require('express'),
 var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
-
+var id = 0;
 var name;
 
 io.on('connection', function(socket){
@@ -29,7 +29,7 @@ Database and Models
 */
 mongoose.connect("mongodb://localhost/myapp");
 var UserSchema = new mongoose.Schema({
-    //id: { type: Number, min: 3, max: 8 },
+    id: Number,
     username: String,
     password: String,
     //color: String,
@@ -67,8 +67,8 @@ app.use(function (req, res, next) {
 Helper Functions
 */
 function authenticate(name, pass, fn) {
-    if (!module.parent) console.log('authenticating %s:%s', name, pass);
-
+    if (!module.parent) console.log('%s have loged in, its password is %s', name, pass);
+ 
     User.findOne({
         username: name
     },
@@ -134,25 +134,31 @@ app.get("/signup", function (req, res) {
 app.post("/signup", userExist, function (req, res) {
     var password = req.body.password;
     var username = req.body.username;
-
+    
     hash(password, function (err, salt, hash) {
         if (err) throw err;
+        id++;
         var user = new User({
+            id: id,
             username: username,
             salt: salt,
             hash: hash,
-        }).save(function (err, newUser) {
+        });
+        console.log(user);
+        user.save(function (err, newUser) {
             if (err) throw err;
-            authenticate(newUser.username, password, function(err, user){
+            authenticate(newUser.username, password, function (err, user){
                 if(user){
                     req.session.regenerate(function(){
                         req.session.user = user;
-                        req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now access <a href="/restricted">/restricted</a>.';
+                        req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now can chat <a href="/restricted">/restricted</a>.';
                         res.redirect('/');
                     });
                 }
             });
         });
+        //try to print and see it
+        
     });
 });
 
