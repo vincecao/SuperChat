@@ -7,8 +7,9 @@
   },
   "dependencies": {
     "express": "3.0.0rc4",
+    "google-translate": "^1.0.6",
     "jade": "*",
-    "nodemon": "*",
-    "mongoose" : "*"
+    "mongoose": "*",
+    "nodemon": "*"
   }
 }

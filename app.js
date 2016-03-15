@@ -6,6 +6,7 @@ var express = require('express'),
     path = require('path'),
     mongoose = require('mongoose'),
     hash = require('./pass').hash;
+    googleTranslate = require('google-translate')("AIzaSyDLYBE-s5itd-S3ts-ngRubBHnShHE1sns");
 
 var app = express();
 var server = http.createServer(app);
@@ -200,4 +201,8 @@ app.get('/chat', function(req,res){
     //res.render("chat",{name:"Vince"});
     res.render("chat",{color:"#FFF", name: sessionName});
 });
+
+googleTranslate.translate('My name is Brandon', 'zh', function(err, translation) {
+  console.log(translation.translatedText);
+  });
 
