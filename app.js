@@ -10,9 +10,9 @@ var express = require('express'),
 var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
-
+var id = 0;
 var name;
-
+var WholePassword;
 io.on('connection', function(socket){
     socket.on('chat message', function(msg){
       io.emit('chat message', msg);
@@ -29,7 +29,7 @@ Database and Models
 */
 mongoose.connect("mongodb://localhost/myapp");
 var UserSchema = new mongoose.Schema({
-    //id: { type: Number, min: 3, max: 8 },
+    id: Number,
     username: String,
     password: String,
     //color: String,
@@ -67,8 +67,8 @@ app.use(function (req, res, next) {
 Helper Functions
 */
 function authenticate(name, pass, fn) {
-    if (!module.parent) console.log('authenticating %s:%s', name, pass);
-
+    if (!module.parent) console.log('%s have loged in, its password is %s', name, pass);
+ 
     User.findOne({
         username: name
     },
@@ -114,10 +114,19 @@ function userExist(req, res, next) {
 Routes
 */
 app.get("/", function (req, res) {
-
+    var Userid = 0;
     if (req.session.user) {
-        res.send("Welcome " + req.session.user.username + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
+        User.findOne({
+        username: req.session.user.username
+        }, function (err, user) {
+        if (user) {
+            //Userid = User.get(id);
+        }
+    });
+
+        res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + Userid + "<br>" +"The password is " + WholePassword + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
         sessionName = req.session.user.username;
+
     } else {
         res.send("<a href='/login'> Login</a>" + "<br>" + "<a href='/signup'> Sign Up</a>");
     }
@@ -132,27 +141,35 @@ app.get("/signup", function (req, res) {
 });
 
 app.post("/signup", userExist, function (req, res) {
-    var password = req.body.password;
-    var username = req.body.username;
 
+    var password = req.body.password;
+    WholePassword = req.body.password;
+    var username = req.body.username;
+    
     hash(password, function (err, salt, hash) {
         if (err) throw err;
+        id++;
         var user = new User({
+            id: id,
             username: username,
             salt: salt,
             hash: hash,
-        }).save(function (err, newUser) {
+        });
+        console.log(user);
+        user.save(function (err, newUser) {
             if (err) throw err;
-            authenticate(newUser.username, password, function(err, user){
+            authenticate(newUser.username, password, function (err, user){
                 if(user){
                     req.session.regenerate(function(){
                         req.session.user = user;
-                        req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now access <a href="/restricted">/restricted</a>.';
+                        req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now can chat <a href="/restricted">/restricted</a>.';
                         res.redirect('/');
                     });
                 }
             });
         });
+        //try to print and see it
+        
     });
 });
 
