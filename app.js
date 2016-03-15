@@ -6,7 +6,9 @@ var express = require('express'),
     path = require('path'),
     mongoose = require('mongoose'),
     hash = require('./pass').hash;
-    googleTranslate = require('google-translate')("AIzaSyDLYBE-s5itd-S3ts-ngRubBHnShHE1sns");
+    //googleTranslate = require('google-translate')("AIzaSyDLYBE-s5itd-S3ts-ngRubBHnShHE1sns");
+
+var googleTranslate = require('google-translate')("AIzaSyDLYBE-s5itd-S3ts-ngRubBHnShHE1sns");
 
 var app = express();
 var server = http.createServer(app);
@@ -18,7 +20,21 @@ var WholeUserid;
 
 io.on('connection', function(socket){
     socket.on('chat message', function(msg){
-      io.emit('chat message', msg);
+        googleTranslate.detectLanguage(msg, function(err, detection) {
+            console.log(detection.language);
+            //console.log(true);
+            // if(detection.language == 'es'){
+            // io.emit('chat message', msg);
+            // }else 
+            if(detection.language != 'en'){
+            io.emit('chat message', msg);
+                googleTranslate.translate(msg, '' , 'en', function(err, translation) {
+            io.emit('chat message', translation.translatedText + '(English)');
+            });
+        }else{
+            io.emit('chat message', msg);
+        };
+        });     
     });
 });
 
@@ -215,7 +231,5 @@ app.get('/chat', function(req,res){
     res.render("chat",{color:"#FFF", name: sessionName});
 });
 
-googleTranslate.translate('My name is Brandon', 'zh', function(err, translation) {
-  console.log(translation.translatedText);
-  });
+
 
