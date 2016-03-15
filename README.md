@@ -2,7 +2,7 @@
 
 This is one simple chatting web application for every registered users using it.
 
-It realizes several features:
+## It realizes several features:
 
 - Register(sign up) and login user interface.
 
@@ -24,5 +24,12 @@ It realizes several features:
 
 more feature need to you to find it..
 
+## Request need to install in local
+
+- Nodejs
+
+- Mongdb
+
 
 *Made by: Vince Cao & Max Lee.*
+See the details in [GitHub](https://github.com/vincecao/SuperChat, "GitHub")
