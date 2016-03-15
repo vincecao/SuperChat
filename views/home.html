@@ -3,21 +3,39 @@
 <head>
     <meta charset="utf-8">
     <title>Home</title>
+    <script   src="https://code.jquery.com/jquery-2.2.1.js"   integrity="sha256-eNcUzO3jsv0XlJLveFEkbB8bA7/CroNpNVk3XpmnwHc="   crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <style type="text/css">
+    body {
+        font-family: 'Open Sans', sans-serif;
+        width: 50%;
+        margin: auto;
+        margin-top: 300px;
+        text-align: center;
+    }
+    </style>
     </head>
-<body>
-<h1>Home</h1>
-        <form action= 'home'>
-        Welcome <%= name %><br>
-        The password is <%= WholePassword %><br>
-        users has registered: <br>
-        <ul>
-        <% for(var i=0; i<userstring.length; i++) { %>
-            <li><%= userstring[i] %></li>
-        <% } %>
-        </ul>
-        <a href='/logout'>logout</a><br>
-        <a href='/chat'>Chatting Page</a>
-        </form>
+<body style="height: 1000px">
+        <h1>Welcome, <%= name %> !</h1><br>
+        <div class="btn-group" style="margin-bottom: 20px;">
+            <button type="button" class="btn btn-small btn-default dropdown-toggle" data-toggle="dropdown">
+            users has registered:
+            <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <% for(var i=0; i<userstring.length; i++) { %>
+                    <li><a href='/chat'><%= userstring[i] %></a></li>
+                <% } %>
+            </ul>
+        </div>
+        <div style="margin-top: 10px;">
+            <a href='/logout' class="btn btn-danger" style="margin-bottom: 20px;">logout</a><br>
+            <a href='/chat' class="btn btn-primary">Chatting Page</a>      
+        </div>
+
+
 </body>
 </head>
 </html>
