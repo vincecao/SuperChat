@@ -27,9 +27,6 @@ server.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-/*
-Database and Models
-*/
 mongoose.connect("mongodb://localhost/myapp");
 var UserSchema = new mongoose.Schema({
     id: Number,
@@ -119,9 +116,21 @@ Routes
 app.get("/", function (req, res) {
     
     if (req.session.user) {
-        //WholeUserid = User.findOne({username: req.session.user.username}, function (err,obj) {console.log(obj);}).id;
-        res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + WholeUserid + "<br>" +"The password is " + WholePassword + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
+        
+        //User.findOne({username: req.session.user.username}, function (err,obj) {WholeUserid = obj.id;});
+
+        res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + WholeUserid + "<br>" +"The password is " + WholePassword + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>" + "<%= someValue %>");
         sessionName = req.session.user.username;
+
+        // exports.someValue = function(req, res, next) {
+        // //query with mongoose
+        //     var query = UserSchema.SomeValue.find({}).select('username');
+
+        //     query.exec(function (err, someValue) {
+        //         if (err) return next(err);
+        //         res.render("/",{someValue: someValue});
+        //     });
+        // };
 
     } else {
         res.redirect("/login");
@@ -151,7 +160,10 @@ app.post("/signup", userExist, function (req, res) {
             salt: salt,
             hash: hash,
         });
+
+        //try to print and see it
         console.log(user);
+
         user.save(function (err, newUser) {
             if (err) throw err;
             authenticate(newUser.username, password, function (err, user){
@@ -164,7 +176,7 @@ app.post("/signup", userExist, function (req, res) {
                 }
             });
         });
-        //try to print and see it
+        
         
     });
 });
@@ -174,6 +186,7 @@ app.get("/login", function (req, res) {
 });
 
 app.post("/login", function (req, res) {
+    WholePassword = req.body.password;
     authenticate(req.body.username, req.body.password, function (err, user) {
         if (user) {
 
