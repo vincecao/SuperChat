@@ -11,7 +11,7 @@
 </head>
 <body style="width: 50%; margin: auto; margin-top: 250px ">
 <h1><%= title %></h1>
-        <form id= 'login' action='/login' method='POST' >
+        <form id= 'login$sign'>
         <div class="form-group">
         	<label>Username</label>
         	<input type='text' class="form-control" name='username' placeholder="Please type in your username">
@@ -20,7 +20,11 @@
         	<label>Password</label>
         	<input type='password' class="form-control" name='password' placeholder="Please type in your password">
         </div>
-        <button class="btn btn-primary"type='submit'>Log In</button>
+        <button class="btn btn-success" type='submit' name="login" formaction="/login" formmethod='POST' style="margin-bottom: 10px">Login</button>
+        <br>
+        or
+        <br>
+        <button class="btn btn-warning" type='submit' name="signup" formaction="/signup" formmethod='GET' style="margin-top: 10px">Go to sign up page</button>
         </form>
 		<h1><%= message %></h1>
 </body>

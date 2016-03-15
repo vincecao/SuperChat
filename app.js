@@ -128,7 +128,7 @@ app.get("/", function (req, res) {
         sessionName = req.session.user.username;
 
     } else {
-        res.send("<a href='/login'> Login</a>" + "<br>" + "<a href='/signup'> Sign Up</a>");
+        res.redirect("/login");
     }
 });
 
