@@ -143,8 +143,8 @@ app.get("/", function (req, res) {
                     return output;
             }
             var userlist = FetchUsername(users, "username");
-            userstring = userlist.join("-");
-            console.log(typeof userstring);
+            //userstring = userlist.join("-");
+            //console.log(typeof userstring);
             //res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + WholeUserid + "<br>" +"The password is " + WholePassword + "<br>" + "users has registered: <br>" + userstring + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
             res.render("home",{name:req.session.user.username, WholePassword: WholePassword, userstring: userlist});
             });
