@@ -32,4 +32,4 @@ more feature need to you to find it..
 
 
 *Made by: Vince Cao & Max Lee.*
-See the details in [GitHub](https://github.com/vincecao/SuperChat, "GitHub")
+See the details in [GitHub](http://github.com/vincecao/SuperChat "GitHub")
