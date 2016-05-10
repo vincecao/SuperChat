@@ -1,5 +1,5 @@
 /*
-Module Dependencies 
+Module Dependencies
 */
 var express = require('express'),
     http = require('http'),
@@ -17,6 +17,7 @@ var id = 0;
 var name;
 var WholePassword;
 var WholeUserid;
+var mongodbUri = 'mongodb://localhost:27017/nodedb';
 
 io.on('connection', function(socket){
     socket.on('chat message', function(msg){
@@ -25,7 +26,7 @@ io.on('connection', function(socket){
             //console.log(true);
             // if(detection.language == 'es'){
             // io.emit('chat message', msg);
-            // }else 
+            // }else
             if(detection.language != 'en'){
             io.emit('chat message', msg);
                 googleTranslate.translate(msg, '' , 'en', function(err, translation) {
@@ -34,7 +35,7 @@ io.on('connection', function(socket){
         }else{
             io.emit('chat message', msg);
         };
-        });     
+        });
     });
 });
 
@@ -43,7 +44,7 @@ server.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-mongoose.connect("mongodb://localhost/myapp");
+mongoose.connect(mongodbUri);
 var UserSchema = new mongoose.Schema({
     id: Number,
     username: String,
@@ -55,7 +56,7 @@ var UserSchema = new mongoose.Schema({
 
 var User = mongoose.model('users', UserSchema);
 /*
-Middlewares and configurations 
+Middlewares and configurations
 */
 app.configure(function () {
     app.use(express.bodyParser());
@@ -75,7 +76,7 @@ app.use(function (req, res, next) {
     delete req.session.error;
     delete req.session.success;
     res.locals.message = '';
-    if (err) res.locals.message = err;
+    if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
     if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
     next();
 });
@@ -83,8 +84,8 @@ app.use(function (req, res, next) {
 Helper Functions
 */
 function authenticate(name, pass, fn) {
-    //if (!module.parent) console.log('%s have loged in, its password is %s', name, pass);
- 
+    if (!module.parent) console.log('%s have loged in, its password is %s', name, pass);
+
     User.findOne({
         username: name
     },
@@ -110,7 +111,6 @@ function requiredAuthentication(req, res, next) {
     } else {
         req.session.error = 'Access denied!';
         res.redirect('/login');
-
     }
 }
 
@@ -121,8 +121,13 @@ function userExist(req, res, next) {
         if (count === 0) {
             next();
         } else {
-            req.session.error = "User Exist"
+            req.session.error = "User Exist";
+            // function myFunction() {
+            //   alert("I am an alert box!");
+            // }
+            // document.write ("This is a warning message!");
             res.redirect("/signup");
+
         }
     });
 }
@@ -131,7 +136,7 @@ function userExist(req, res, next) {
 Routes
 */
 app.get("/", function (req, res) {
-    
+
     if (req.session.user) {
         var userstring = "";
         User.find(function (err, users){
@@ -143,12 +148,12 @@ app.get("/", function (req, res) {
                     return output;
             }
             var userlist = FetchUsername(users, "username");
-            //userstring = userlist.join("-");
-            //console.log(typeof userstring);
+            userstring = userlist.join("-");
+            console.log(typeof userstring);
             //res.send("Welcome " + req.session.user.username + "<br>" +"The id is " + WholeUserid + "<br>" +"The password is " + WholePassword + "<br>" + "users has registered: <br>" + userstring + "<br>" + "<a href='/logout'>logout</a>" + "<br>" + "<a href='/chat'>Chatting Page</a>");
             res.render("home",{name:req.session.user.username, WholePassword: WholePassword, userstring: userlist});
             });
-                sessionName = req.session.user.username; 
+                sessionName = req.session.user.username;
     } else {
         res.redirect("/login");
     }
@@ -175,7 +180,7 @@ app.post("/signup", userExist, function (req, res) {
     var password = req.body.password;
     WholePassword = req.body.password;
     var username = req.body.username;
-    
+
     hash(password, function (err, salt, hash) {
         if (err) throw err;
         id++;
@@ -195,14 +200,14 @@ app.post("/signup", userExist, function (req, res) {
                 if(user){
                     req.session.regenerate(function(){
                         req.session.user = user;
-                        req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now can chat <a href="/restricted">/restricted</a>.';
+                        //req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now can chat <a href="/restricted">/restricted</a>.';
                         res.redirect('/');
                     });
                 }
             });
         });
-        
-        
+
+
     });
 });
 
@@ -218,7 +223,7 @@ app.post("/login", function (req, res) {
             req.session.regenerate(function () {
 
                 req.session.user = user;
-                req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now access <a href="/restricted">/restricted</a>.';
+                //req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now access <a href="/restricted">/restricted</a>.';
                 res.redirect('/');
             });
         } else {
@@ -234,9 +239,8 @@ app.get('/logout', function (req, res) {
     });
 });
 
-app.get('/chat', function(req,res){ 
-    
+app.get('/chat', requiredAuthentication, function(req,res){
+
     //res.render("chat",{name:"Vince"});
     res.render("chat",{color:"#FFF", name: sessionName});
 });
-
