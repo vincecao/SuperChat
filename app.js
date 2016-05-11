@@ -76,7 +76,7 @@ app.use(function (req, res, next) {
     delete req.session.error;
     delete req.session.success;
     res.locals.message = '';
-    if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
+    if (err) res.locals.message = err;
     if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
     next();
 });

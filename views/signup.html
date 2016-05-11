@@ -25,7 +25,11 @@
         <br>
         <button class="btn btn-warning" type='submit' name="signup" formaction="/login" formmethod='GET' style="margin-top: 10px">Go to login in page</button>
         </form>
-	<h2><%= message %></h2>
+  <script>function myFunction() {
+            alert(document.write (<%= message %>));
+          }
+  </scrpit>
+  <h2><%= message %></h2>
 </body>
 </head>
 </html>
