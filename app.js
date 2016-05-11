@@ -191,7 +191,11 @@ app.get("/home", function (req, res) {
 });
 
 app.get("/login", function (req, res) {
-    res.render("login", {title:'User Login', message: req.session.error});
+  if (req.session.user) {
+      res.redirect("/");
+  } else {
+      res.render("login", {title:'User Login'});
+  }
 });
 
 app.post("/signup", userExist, function (req, res) {
@@ -229,6 +233,7 @@ app.post("/signup", userExist, function (req, res) {
 });
 
 app.post("/login", nonemptyinLogin, function (req, res) {
+
   WholePassword = req.body.password;
   authenticate(req.body.username, req.body.password, function (err, user) {
     if (user) {
