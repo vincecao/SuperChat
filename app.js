@@ -70,6 +70,8 @@ app.configure(function () {
     //app.set('view engine', 'jade');
 });
 
+app.use(express.static(__dirname + '/img'));
+
 app.use(function (req, res, next) {
     var err = req.session.error,
         msg = req.session.success;
