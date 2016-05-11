@@ -1,6 +1,28 @@
-# Super Chat
+# Super Chat v2.魔改
 
 This is one simple chatting web application for every registered users using it.
+
+###update logs:###
+
+5/10/2016 
+- realse Super Chat v2.魔改
+- fix session and hit problems
+
+3/14/2016 
+- realse Super Chat version 1.0
+
+3/13/2016 
+- realse Super Chat version 0.0.1
+
+
+###Screenshots###
+
+![](img/screenshot1.png)
+
+![](img/screenshot2.png)
+
+![](img/screenshot3.png)
+
 
 ## It realizes several features:
 
