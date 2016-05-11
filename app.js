@@ -115,21 +115,36 @@ function requiredAuthentication(req, res, next) {
 }
 
 function userExist(req, res, next) {
+  if (req.body.password != "" || req.body.username != "" )
+  {
     User.count({
         username: req.body.username
     }, function (err, count) {
         if (count === 0) {
             next();
         } else {
+            res.redirect("/signup");
             req.session.error = "User Exist";
             // function myFunction() {
             //   alert("I am an alert box!");
             // }
             // document.write ("This is a warning message!");
-            res.redirect("/signup");
-
         }
     });
+  }else{
+    res.redirect("/signup");
+    req.session.error = "username and password can not be empty";
+  }
+}
+
+function nonemptyinLogin(req, res, next) {
+  if (req.body.password != "" || req.body.username != "" )
+  {
+    next();
+  }else{
+    res.redirect("/login");
+    req.session.error = "username and password can not be empty";
+  }
 }
 
 /*
@@ -175,48 +190,46 @@ app.get("/home", function (req, res) {
     }
 });
 
-app.post("/signup", userExist, function (req, res) {
-
-    var password = req.body.password;
-    WholePassword = req.body.password;
-    var username = req.body.username;
-
-    hash(password, function (err, salt, hash) {
-        if (err) throw err;
-        id++;
-        var user = new User({
-            id: id,
-            username: username,
-            salt: salt,
-            hash: hash,
-        });
-
-        //try to print and see it
-        console.log(user);
-
-        user.save(function (err, newUser) {
-            if (err) throw err;
-            authenticate(newUser.username, password, function (err, user){
-                if(user){
-                    req.session.regenerate(function(){
-                        req.session.user = user;
-                        //req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now can chat <a href="/restricted">/restricted</a>.';
-                        res.redirect('/');
-                    });
-                }
-            });
-        });
-
-
-    });
-});
-
 app.get("/login", function (req, res) {
     res.render("login", {title:'User Login', message: req.session.error});
 });
 
-app.post("/login", function (req, res) {
-    WholePassword = req.body.password;
+app.post("/signup", userExist, function (req, res) {
+
+  var password = req.body.password;
+  WholePassword = req.body.password;
+  var username = req.body.username;
+
+  hash(password, function (err, salt, hash) {
+    if (err) throw err;
+    id++;
+    var user = new User({
+      id: id,
+      username: username,
+      salt: salt,
+      hash: hash,
+    });
+
+    //try to print and see it
+    console.log(user);
+
+    user.save(function (err, newUser) {
+      if (err) throw err;
+      authenticate(newUser.username, password, function (err, user){
+        if(user){
+          req.session.regenerate(function(){
+            req.session.user = user;
+            //req.session.success = 'Authenticated as ' + user.username + ' click to <a href="/logout">logout</a>. ' + ' You may now can chat <a href="/restricted">/restricted</a>.';
+            res.redirect('/');
+          });
+        }
+      });
+    });
+  });
+});
+
+app.post("/login", nonemptyinLogin, function (req, res) {
+  WholePassword = req.body.password;
     authenticate(req.body.username, req.body.password, function (err, user) {
         if (user) {
 
