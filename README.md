@@ -1,8 +1,8 @@
 # Super Chat v2.魔改
 
-!![800x600](//www.youtube.com/embed/bY-rzZFeEc8)
-
 This is one simple chatting web application for every registered users using it.
+
+##[Video demo] (http://www.youtube.com/embed/bY-rzZFeEc8 "Video demo")##
 
 ###update logs:###
 
