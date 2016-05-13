@@ -1,6 +1,6 @@
 # Super Chat v2.魔改
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/bY-rzZFeEc8" frameborder="0" allowfullscreen></iframe>
+!![800x600](//www.youtube.com/embed/bY-rzZFeEc8)
 
 This is one simple chatting web application for every registered users using it.
 
