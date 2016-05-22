@@ -55,5 +55,5 @@ more feature need to you to find it..
 - Mongdb
 
 
-*Made by: Vince Cao & [Max Lee](https://github.com/maekks "Max Lee").*
+*Made by: Vince Cao & [Max Lee](https://github.com/maekks "Max Lee") @2016.*
 See the details in [GitHub](http://github.com/vincecao/SuperChat "GitHub")
