@@ -2,9 +2,9 @@
 
 This is one simple chatting web application for every registered users using it.
 
-##[Video demo] (http://www.youtube.com/embed/bY-rzZFeEc8 "Video demo")##
+## [Video demo](http://www.youtube.com/embed/bY-rzZFeEc8 "Video demo")
 
-###update logs:###
+### update logs:###
 
 5/10/2016 
 - realse Super Chat v2.魔改
@@ -17,7 +17,7 @@ This is one simple chatting web application for every registered users using it.
 - realse Super Chat version 0.0.1
 
 
-###Screenshots###
+### Screenshots###
 
 ![](img/screenshot1.png)
 
